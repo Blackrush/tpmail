@@ -49,4 +49,11 @@
         password: mail
         priv: 'mail.*:ALL'
         state: present
+    - name: Create Database Tables
+      command: >
+        mysql --user=mail --password=mail mail
+        --host=localhost --batch --skip-column-names
+        --execute="{{item}}"
+      with_file:
+        - mail.sql
 
