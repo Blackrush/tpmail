@@ -1,0 +1,52 @@
+---
+
+- hosts: all
+  gather_facts: no
+  tasks:
+    - name: Install Python
+      raw: apt install -y python
+
+- hosts: transfer_agents
+  tasks:
+    - name: Install Postfix
+      apt:
+        name: postfix,postfix-mysql
+        state: present
+
+    - name: Configure Postfix
+      copy:
+        src: "etc/postfix/{{item}}"
+        dest: "/etc/postfix/{{item}}"
+        owner: root
+        group: root
+        mode: 0600
+      with_items:
+        - main.cf
+        - master.cf
+        - dynamicmaps.cf
+
+- hosts: delivery_agents
+  tasks:
+    - name: Install Ansible Module Packages
+      apt:
+        name: python-pip,libmysqlclient-dev
+        state: present
+    - name: Install Ansible Module Python Packages
+      pip:
+        name: MySQL-python
+        state: present
+    - name: Install Packages
+      apt:
+        name: mysql-server,dovecot-core,dovecot-imapd,dovecot-lmtpd,dovecot-mysql
+        state: present
+    - name: Create Database
+      mysql_db:
+        name: mail
+        state: present
+    - name: Create Database User
+      mysql_user:
+        name: mail
+        password: mail
+        priv: 'mail.*:ALL'
+        state: present
+

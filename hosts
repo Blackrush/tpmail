@@ -1,0 +1,8 @@
+machine1 ansible_host=192.168.56.101 ansible_user=antoine ansible_ssh_pass=antoine ansible_become=yes ansible_become_pass=antoine
+machine2 ansible_host=192.168.56.102 ansible_user=antoine ansible_ssh_pass=antoine ansible_become=yes ansible_become_pass=antoine
+
+[transfer_agents]
+machine1
+
+[delivery_agents]
+machine2
